@@ -1,0 +1,66 @@
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Product name</label>
+    <input
+      pInputText
+      formControlName="prodName"
+      [fluid]="true"
+      class="mt-4 mb-2"
+      maxlength="50"
+    />
+    <div class="flex justify-between">
+      <div>
+        <p-message
+          severity="error"
+          variant="simple"
+          size="small"
+          *ngIf="
+            (prodName?.hasError('invalidDescription') ||
+              prodName?.hasError('required')) &&
+            prodName?.dirty
+          "
+        >
+          This field is required and cannot contain blank spaces.
+        </p-message>
+        <p-message
+          severity="error"
+          variant="simple"
+          size="small"
+          *ngIf="prodName?.hasError('maxlength') && prodName?.dirty"
+        >
+          Maximum character limit is 50.
+        </p-message>
+
+        <p-message
+          severity="error"
+          variant="simple"
+          size="small"
+          *ngIf="prodName?.hasError('nameTaken') && prodName?.touched"
+        >
+          Product name is already taken.
+        </p-message>
+      </div>
+      <div>
+        <div class="text-sm text-gray-500 ml-auto text-right">
+          {{ this.myForm.get("prodName")?.value?.length || 0 }}/50
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 mt-4">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        icon="pi pi-times"
+        (click)="this.ref.close()"
+      />
+      <p-button
+        [label]="product ? 'Save' : 'Submit'"
+        icon="pi pi-check"
+        [disabled]="isFormUnchanged() || myForm.invalid || isSubmitting"
+        [loading]="isSubmitting"
+        type="submit"
+      />
+    </div>
+  </div>
+</form>
+<p-toast />

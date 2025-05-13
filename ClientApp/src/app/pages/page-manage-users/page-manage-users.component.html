@@ -1,0 +1,75 @@
+<p-toast />
+<p-card>
+  <div class="text-2xl font-medium">User Management</div>
+  <div class="flex justify-end gap-x-2">
+    <p-iconfield iconPosition="left" class="ml-auto">
+      <p-inputicon>
+        <i class="pi pi-search"></i>
+      </p-inputicon>
+      <input
+        pInputText
+        type="text"
+        (keyup.enter)="loadAccounts({ first: 0 })"
+        (keyup.esc)="searchQuery = ''; loadAccounts({ first: 0 })"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()" 
+        placeholder="Search keyword"
+      />
+    </p-iconfield>
+    <p-button label="Add User" icon="pi pi-plus" (click)="showDialog()" />
+  </div>
+
+  <div class="p-card-content">
+    <p-table
+      [value]="pagedResult.items"
+      [paginator]="true"
+      [rows]="pagedResult.pageSize"
+      [lazy]="true"
+      (onLazyLoad)="loadAccounts($event)"
+      [totalRecords]="pagedResult.totalCount"
+      [loading]="loading"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [rowHover]="true"
+      #userTable
+    >
+      <ng-template #header>
+        <tr>
+          <th class="w-1/6 text-lg">Username</th>
+          <th class="w-1/6 text-lg">Full Name</th>
+          <th class="w-1/6 text-lg">Date Added</th>
+          <th class="w-1/6 text-lg">Role</th>
+          <th class="w-1/6 text-lg">Status</th>
+          <th class="w-1/6 text-lg">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-account>
+        <tr>
+          <td>{{ account.username }}</td>
+          <td>{{ account.fullName }}</td>
+          <td>{{ account.dateAdded | date : "d MMM y" }}</td>
+          <td>{{ account.role }}</td>
+          <td>
+            <p-tag [value]="account.status" [severity]="getSeverity(account.status)" />
+            <!-- <p-chip
+              [label]="account.status"
+              [dt]="
+                account.status === 'Active'
+                  ? greenChip
+                  : account.status === 'Inactive'
+                  ? grayChip
+                  : redChip
+              "
+            /> -->
+          </td>
+          <td>
+            <p-button
+              label="Edit"
+              icon="pi pi-user-edit"
+              (click)="showDialog(account)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-card>

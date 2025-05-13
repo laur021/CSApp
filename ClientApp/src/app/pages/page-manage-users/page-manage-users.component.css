@@ -1,0 +1,10 @@
+:host {
+  /* put here the components design token and customize */
+  th,
+  td {
+    @apply text-center;
+  }
+  ::ng-deep .p-datatable-table {
+    @apply mt-8;
+  }
+}

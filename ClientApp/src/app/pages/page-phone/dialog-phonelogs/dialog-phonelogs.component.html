@@ -1,0 +1,59 @@
+<p-table
+  [value]="data.items"
+  [paginator]="true"
+  [rows]="data.pageSize"
+  [lazy]="true"
+  (onLazyLoad)="getLogs($event)"
+  [totalRecords]="data.totalCount"
+  [loading]="isLoading"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  [rowHover]="true"
+  class="text-base"
+>
+  <ng-template #header>
+    <tr>
+      <th class="w-1/12 text-lg">Id</th>
+      <th class="w-1/12 text-lg">Action</th>
+      <th class="w-1/5 text-lg !text-left">Details</th>
+      <th class="w-1/12 text-lg">Executed By</th>
+      <th class="w-1/6 text-lg">Timestamp</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-item>
+    <tr>
+      <td>{{ item.id }}</td>
+      <td>{{ item.action }}</td>
+      <td
+        class="!text-left max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis"
+        [pTooltip]="
+          formatDetails(item.detail).length ? tooltipContent : undefined
+        "
+        tooltipPosition="right"
+      >
+        {{ item.detail }}
+      </td>
+      <ng-template #tooltipContent appendTo="body">
+        <table class="border-collapse border border-gray-300 text-left">
+          <tr>
+            <th class="border p-1">Field</th>
+            <th class="border p-1">Old Value</th>
+            <th class="border p-1">New Value</th>
+          </tr>
+          <ng-container *ngFor="let detail of formatDetails(item.detail)">
+            <tr>
+              <td class="border p-1 whitespace-nowrap max-w-[100px]">
+                {{ detail.field }}
+              </td>
+              <td class="border p-1">{{ detail.oldValue }}</td>
+              <td class="border p-1">{{ detail.newValue }}</td>
+            </tr>
+          </ng-container>
+        </table>
+      </ng-template>
+      <td>{{ item.addedBy }}</td>
+      <td>
+        {{ item.dateAdded | date : "d MMM y HH:mm:ss" }}
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

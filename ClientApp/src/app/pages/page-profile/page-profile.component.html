@@ -1,0 +1,134 @@
+<p-toast />
+<p-card>
+  <div class="text-2xl font-semibold">Profile Settings</div>
+
+  <div class="p-card-content mt-8">
+    <form [formGroup]="profileForm" class="flex flex-col gap-y-4 mb-4">
+      <div class="flex gap-x-8">
+        <div class="flex flex-col flex-1 gap-y-4">
+          <label for="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            pInputText
+            formControlName="username"
+            [fluid]="true"
+          />
+        </div>
+        <div class="flex flex-col flex-1 gap-y-4">
+          <label for="fullName">Fullname</label>
+          <input
+            id="fullName"
+            type="text"
+            pInputText
+            formControlName="fullName"
+            [fluid]="true"
+          />
+        </div>
+      </div>
+      <div class="flex gap-x-8">
+        <div class="flex flex-col flex-1 gap-y-4">
+          <label for="role">Role</label>
+          <input
+            id="role"
+            type="text"
+            pInputText
+            formControlName="role"
+            [fluid]="true"
+          />
+        </div>
+        <div class="flex flex-col flex-1 gap-y-4">
+          <label for="status">Status</label>
+          <input
+            id="status"
+            type="text"
+            pInputText
+            formControlName="status"
+            [fluid]="true"
+          />
+        </div>
+      </div>
+      <div class="flex flex-col flex-1 gap-y-4">
+        <label for="password">Current Password</label>
+        <p-password
+          id="password"
+          formControlName="password"
+          [toggleMask]="true"
+          [fluid]="true"
+          [feedback]="false"
+        />
+      </div>
+    </form>
+    <form [formGroup]="passwordForm" class="flex flex-col gap-y-4">
+      <div class="flex flex-col flex-1 gap-y-4">
+        <label for="newPassword">New Password</label>
+        <p-password
+          id="newPassword"
+          formControlName="newPassword"
+          [toggleMask]="true"
+          [fluid]="true"
+        />
+      </div>
+      <div class="flex flex-col flex-1 gap-y-4">
+        <label for="confirmPassword">Confirm Password</label>
+        <p-password
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          [toggleMask]="true"
+          [fluid]="true"
+          [feedback]="false"
+        />
+      </div>
+
+      <p-message
+        severity="error"
+        icon="pi pi-times-circle"
+        styleClass="mb-2"
+        *ngIf="
+          passwordForm.get('newPassword')?.hasError('minlength') ||
+          passwordForm.get('newPassword')?.hasError('maxlength')
+        "
+      >
+        Password must be between 6 and 20 characters.
+      </p-message>
+
+      <p-message
+        severity="error"
+        icon="pi pi-times-circle"
+        styleClass="mb-2"
+        *ngIf="
+          passwordForm.hasError('passwordsMismatch') &&
+          passwordForm.get('newPassword')?.value &&
+          passwordForm.get('confirmPassword')?.value
+        "
+      >
+        Password not match.
+      </p-message>
+
+      <p-message
+        severity="success"
+        icon="pi pi-check"
+        styleClass="mb-2"
+        *ngIf="passwordForm.valid"
+        >Password match</p-message
+      >
+      <div class="flex justify-end gap-2" *ngIf="passwordForm.valid">
+        <p-button
+          label="Cancel"
+          severity="secondary"
+          icon="pi pi-times"
+          (click)="clearFields()"
+        />
+        <p-button
+          label="Save"
+          type="submit"
+          [disabled]="passwordForm.invalid || isSubmitting"
+          icon="pi pi-check"
+          [loading]="isSubmitting"
+          (click)="onSubmit()"
+        />
+      </div>
+    </form>
+  </div>
+  <div class="p-card-footer"></div>
+</p-card>

@@ -1,0 +1,8 @@
+:host {
+  /* put here the components design token and customize */
+  th,
+  td {
+    @apply text-center;
+    @apply text-nowrap;
+  }
+}

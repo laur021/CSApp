@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\Mark.Bacolor\Documents\OPSA Projects\CNCS\API\bin\Release\net8.0\publish\</_PublishTargetUrl>
+    <History>True|2025-04-25T05:49:16.9355828Z;True|2025-04-24T14:50:11.3112965+08:00;True|2025-04-24T12:27:59.6500528+08:00;True|2025-04-22T08:12:05.0223049+08:00;True|2025-02-26T13:16:49.4714271+08:00;True|2025-02-26T13:09:51.1751428+08:00;True|2025-02-26T12:49:00.8943030+08:00;True|2025-02-26T11:01:15.0169439+08:00;True|2025-02-25T15:32:56.0448953+08:00;True|2025-02-25T14:59:37.6346702+08:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

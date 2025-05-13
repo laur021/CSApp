@@ -1,0 +1,225 @@
+<form class="flex flex-col gap-4" [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  @if (transaction) {
+  <p-message
+    severity="info"
+    icon="pi pi-info-circle"
+    size="small"
+    text="If the product or description is not displayed, it may have been deleted."
+    styleClass="h-full mt-1"
+    clas
+  />
+  }
+  <div class="flex gap-4">
+    <div class="flex-1 flex flex-col gap-4">
+      <label for="transactionId">Transaction ID</label>
+      <input pInputText formControlName="transactionId" [fluid]="true" />
+    </div>
+    <div
+      class="flex flex-col gap-4"
+      *ngIf="this.accountService.activeUser()?.team === 'VN'"
+    >
+      <label for="mode">Mode</label>
+      <p-selectbutton
+        [options]="MODE"
+        formControlName="mode"
+        optionLabel="label"
+        optionValue="value"
+        aria-labelledby="basic"
+      />
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between gap-x-4">
+    <div class="flex flex-col gap-4">
+      <label for="customer">Customer ID</label>
+      <input
+        pInputText
+        formControlName="customer"
+        [fluid]="true"
+        maxlength="50"
+      />
+    </div>
+    <div class="flex flex-col gap-4 self-end">
+      <p-button
+        label="History"
+        icon="pi pi-history"
+        (click)="showCustomerLogs()"
+      />
+    </div>
+    <div class="flex flex-col gap-4">
+      <label for="pickUpDate">Pickup Date</label>
+      <p-datepicker
+        [showIcon]="true"
+        formControlName="pickUpDate"
+        inputId="pickupDate"
+        [showOnFocus]="false"
+        [fluid]="true"
+        [iconDisplay]="'input'"
+        appendTo="body"
+        dateFormat="yy-M-dd"
+        [showTime]="accountService.activeUser()?.team === 'CN' ? false : true"
+      />
+    </div>
+    <div class="flex flex-col gap-4">
+      <label for="takeOffDate">Take off Date</label>
+      <p-datepicker
+        [showIcon]="true"
+        formControlName="takeOffDate"
+        inputId="takeOffDate"
+        [showOnFocus]="false"
+        [fluid]="true"
+        [iconDisplay]="'input'"
+        appendTo="body"
+        dateFormat="yy-M-dd"
+        [showTime]="accountService.activeUser()?.team === 'CN' ? false : true"
+      />
+    </div>
+  </div>
+  <p-message
+    severity="error"
+    icon="pi pi-times-circle"
+    size="small"
+    *ngIf="myForm.errors?.['takeOffBeforePickUp'] &&
+        (myForm.get('pickUpDate')?.touched || myForm.get('takeOffDate')?.touched)
+      "
+  >
+    Takeoff date cannot be earlier than Pickup date.
+  </p-message>
+
+  <label for="productName">Product</label>
+  <div>
+    <!-- insert mode : optionvalue will be id -->
+    <!-- edit mode : optionvalue will be name and use that name to get the id from products -->
+    <p-select
+      formControlName="productName"
+      optionLabel="name"
+      [optionValue]="transaction ? 'name' : 'id'"
+      [fluid]="true"
+      [options]="products"
+      (onChange)="onProductChange($event)"
+      placeholder="Select Product"
+      [editable]="false"
+      #productSelect
+    />
+  </div>
+
+  <label for="descriptionName"
+    >Description
+    <i
+      class="pi pi-info-circle"
+      pTooltip="Click [X] to show all items."
+      tooltipPosition="right"
+      placeholder="Right"
+    ></i
+  ></label>
+  <!-- insert mode : optionvalue will be id -->
+  <!-- edit mode : optionvalue will be name and use that name to get the id from descriptions and use it during submit-->
+  <div>
+    <p-select
+      formControlName="descriptionName"
+      optionLabel="name"
+      [optionValue]="transaction ? 'name' : 'id'"
+      [fluid]="true"
+      [options]="descriptions"
+      placeholder="Select Description"
+      (onChange)="onDescriptionChange($event)"
+      [editable]="true"
+      [showClear]="true"
+      (onClear)="loadDescriptions()"
+      [autoDisplayFirst]="false"
+      (click)="openDropdown($event)"
+      [readonly]="false"
+      [panelStyle]="{
+        visibility: myForm
+          .get('descriptionName')
+          ?.hasError('invalidDescription')
+          ? 'hidden'
+          : 'visible'
+      }"
+      #descriptionSelect
+    />
+    <!--       [panelStyle]="{
+        visibility: myForm.get('productName')?.value ? 'visible' : 'hidden'
+      }" -->
+  </div>
+  <p-message
+    severity="error"
+    icon="pi pi-times-circle"
+    size="small"
+    *ngIf="
+      myForm.get('descriptionName')?.hasError('invalidDescription') &&
+      myForm.get('descriptionName')?.dirty
+    "
+  >
+    Invalid input. Click [X] to show all items.
+  </p-message>
+
+  <label for="remarks"
+    >Remarks <p-tag severity="secondary" value="Optional" [rounded]="true"
+  /></label>
+  <div>
+    <textarea
+      rows="3"
+      cols="30"
+      maxlength="250"
+      pTextarea
+      formControlName="remarks"
+      [fluid]="true"
+    ></textarea>
+    <div class="text-sm text-gray-500 ml-auto text-right">
+      {{ this.myForm.get("remarks")?.value?.length || 0 }}/250
+    </div>
+  </div>
+
+  <label for="repliedBy">Replied By</label>
+  <div>
+    <!-- Display active user when adding -->
+    <input
+      *ngIf="!transaction"
+      pInputText
+      formControlName="repliedBy"
+      [fluid]="true"
+    />
+
+    <!-- Show dropdown when editing -->
+    <p-select
+      *ngIf="transaction"
+      formControlName="repliedBy"
+      optionLabel="username"
+      optionValue="username"
+      class="w-full"
+      [options]="usersList"
+      appendTo="body"
+    />
+  </div>
+
+  <label for="status">Status</label>
+  <div>
+    <p-select
+      formControlName="status"
+      optionLabel="status"
+      [optionValue]="transaction ? 'status' : ''"
+      class="w-full"
+      [fluid]="true"
+      [options]="STATUS"
+      appendTo="body"
+    />
+    <!-- [optionValue]="transaction ? 'status' : ''" -->
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (click)="this.ref.close()"
+      icon="pi pi-times"
+    />
+    <p-button
+      [label]="transaction ? 'Save' : 'Submit'"
+      type="submit"
+      [disabled]="myForm.invalid || isSubmitting || !myForm.dirty"
+      icon="pi pi-check"
+      [loading]="isSubmitting"
+    />
+  </div>
+</form>

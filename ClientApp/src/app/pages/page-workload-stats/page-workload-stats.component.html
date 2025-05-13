@@ -1,0 +1,383 @@
+<p-card>
+  <div class="text-2xl font-semibold">Workload Statistics</div>
+  <div class="flex justify-end items-center mb-8 gap-x-4">
+    <p-datepicker
+      [(ngModel)]="rangeDates"
+      selectionMode="range"
+      [readonlyInput]="true"
+      showIcon
+      iconDisplay="input"
+      placeholder="Select a date range"
+      [showButtonBar]="true"
+      dateFormat="yy-M-dd"
+      (onClick)="initAllData()"
+      (onClearClick)="initAllData()"
+    />
+    <p-button label="Search" icon="pi pi-search" (onClick)="initAllData()" />
+    <p-button
+      label="Export All"
+      icon="pi pi-file-excel"
+      severity="success"
+      (onClick)="
+        this.exportData(['user', 'product', 'description', 'transaction'])
+      "
+    />
+  </div>
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+    <div>
+      <!-- Transaction -->
+      <p-panel
+        header="Transactions Per Day"
+        class="overflow-hidden"
+        [toggleable]="true"
+      >
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- Chart Container -->
+          <div class="w-full md:w-1/2">
+            <p-chart
+              type="line"
+              [data]="trnxChartdata"
+              [options]="trnxChartoptions"
+              class="w-full h-[300px]"
+            />
+          </div>
+          <!-- Table Container -->
+          <div class="w-full md:w-1/2">
+            <p-scrollpanel
+              [style]="{ width: '100%', height: '250px', padding: '4px' }"
+            >
+              <p-table
+                [value]="transactionData"
+                [rowHover]="true"
+                #userTable
+                [tableStyle]="{ width: '100%' }"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="w-1/2 !text-left">Transaction Date</th>
+                    <th class="w-1/12">Email</th>
+                    <th class="w-1/12">Phone</th>
+                    <th class="w-1/12">Total</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                  <tr>
+                    <td
+                      class="!text-left max-w-[150px] overflow-hidden whitespace-nowrap text-ellipsis"
+                    >
+                      {{ item.transactionDate | date : "yyyy-MM-dd" }}
+                    </td>
+                    <td>{{ item.emailCount }}</td>
+                    <td>{{ item.phoneCount }}</td>
+                    <td>{{ item.totalTransactions }}</td>
+                  </tr>
+                </ng-template>
+                <!-- Single Row for Totals -->
+                <ng-template pTemplate="footer">
+                  <tr class="font-bold">
+                    <td class="w-1/2 !text-left">Total</td>
+                    <td>
+                      {{
+                        transactionData.length
+                          ? transactionData[0].totalEmailCount
+                          : 0
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        transactionData.length
+                          ? transactionData[0].totalPhoneCount
+                          : 0
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        transactionData.length
+                          ? (transactionData[0].totalEmailCount || 0) +
+                            (transactionData[0].totalPhoneCount || 0)
+                          : 0
+                      }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-scrollpanel>
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <p-button
+            label="Export"
+            [raised]="true"
+            severity="secondary"
+            icon="pi pi-file-excel"
+            (onClick)="this.exportData(['transaction'])"
+          />
+        </div>
+      </p-panel>
+    </div>
+    <div>
+      <!-- User Count -->
+      <p-panel
+        header="User Count Summary"
+        class="overflow-hidden"
+        [toggleable]="true"
+      >
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- Chart Container -->
+          <div class="w-full md:w-1/2">
+            <p-chart
+              type="bar"
+              [data]="userChartdata"
+              [options]="userChartoptions"
+              class="w-full h-[300px]"
+            />
+          </div>
+          <div class="w-full md:w-1/2">
+            <p-scrollpanel
+              [style]="{ width: '100%', height: '250px', padding: '4px' }"
+            >
+              <p-table
+                [value]="userData"
+                [rowHover]="true"
+                #userTable
+                [tableStyle]="{ width: '100%' }"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="w-1/2 !text-left">User</th>
+                    <th class="w-1/12">Email</th>
+                    <th class="w-1/12">Phone</th>
+                    <th class="w-1/12">Total</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                  <tr>
+                    <td
+                      class="!text-left max-w-[150px] overflow-hidden whitespace-nowrap text-ellipsis"
+                      [pTooltip]="item.user"
+                      tooltipPosition="bottom"
+                    >
+                      {{ item.user }}
+                    </td>
+                    <td>{{ item.emailCount }}</td>
+                    <td>{{ item.phoneCount }}</td>
+                    <td>{{ item.totalTransactions }}</td>
+                  </tr>
+                </ng-template>
+                <!-- Single Row for Totals -->
+                <ng-template pTemplate="footer">
+                  <tr class="font-bold">
+                    <td class="w-1/2 !text-left">Total</td>
+                    <td>
+                      {{ userData.length ? userData[0].totalEmailCount : 0 }}
+                    </td>
+                    <td>
+                      {{ userData.length ? userData[0].totalPhoneCount : 0 }}
+                    </td>
+                    <td>
+                      {{
+                        userData.length
+                          ? (userData[0].totalEmailCount || 0) +
+                            (userData[0].totalPhoneCount || 0)
+                          : 0
+                      }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-scrollpanel>
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <p-button
+            label="Export"
+            [raised]="true"
+            severity="secondary"
+            icon="pi pi-file-excel"
+            (onClick)="this.exportData(['user'])"
+          />
+        </div>
+      </p-panel>
+    </div>
+    <div>
+      <!-- Product -->
+      <p-panel
+        header="Product Summary"
+        class="overflow-hidden"
+        [toggleable]="true"
+      >
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- Chart Container -->
+          <div class="w-full md:w-1/2">
+            <p-chart
+              type="pie"
+              [data]="prodChartdata"
+              [options]="prodChartoptions"
+              class="w-full h-[300px]"
+            />
+          </div>
+          <div class="w-full md:w-1/2">
+            <p-scrollpanel
+              [style]="{ width: '100%', height: '250px', padding: '4px' }"
+            >
+              <p-table
+                [value]="productData"
+                [rowHover]="true"
+                #transactionTable
+                [tableStyle]="{ width: '100%' }"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="w-1/2 !text-left">Product</th>
+                    <th class="w-1/12">Email</th>
+                    <th class="w-1/12">Phone</th>
+                    <th class="w-1/12">Total</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                  <tr>
+                    <td
+                      class="!text-left max-w-[150px] overflow-hidden whitespace-nowrap text-ellipsis"
+                      [pTooltip]="item.productName"
+                      tooltipPosition="bottom"
+                    >
+                      {{ item.productName }}
+                    </td>
+                    <td>{{ item.emailCount }}</td>
+                    <td>{{ item.phoneCount }}</td>
+                    <td>{{ item.totalTransactions }}</td>
+                  </tr>
+                </ng-template>
+                <!-- Single Row for Totals -->
+                <ng-template pTemplate="footer">
+                  <tr class="font-bold">
+                    <td class="w-1/2 !text-left">Total</td>
+                    <td>
+                      {{
+                        productData.length ? productData[0].totalEmailCount : 0
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        productData.length ? productData[0].totalPhoneCount : 0
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        productData.length
+                          ? (productData[0].totalEmailCount || 0) +
+                            (productData[0].totalPhoneCount || 0)
+                          : 0
+                      }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-scrollpanel>
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <p-button
+            label="Export"
+            [raised]="true"
+            severity="secondary"
+            icon="pi pi-file-excel"
+            (onClick)="this.exportData(['product'])"
+          />
+        </div>
+      </p-panel>
+    </div>
+    <div>
+      <!-- Description -->
+      <p-panel
+        header="Description Summary"
+        class="overflow-hidden"
+        [toggleable]="true"
+      >
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- Chart Container -->
+          <div class="w-full md:w-1/2">
+            <p-chart
+              type="doughnut"
+              [data]="descChartdata"
+              [options]="descChartoptions"
+              class="w-full h-[300px]"
+            />
+          </div>
+          <div class="w-full md:w-1/2">
+            <p-scrollpanel
+              [style]="{ width: '100%', height: '250px', padding: '4px' }"
+            >
+              <p-table
+                [value]="descriptionData"
+                [rowHover]="true"
+                #descriptionTable
+                [tableStyle]="{ width: '100%' }"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="w-1/2 !text-left">Description</th>
+                    <th class="w-1/12">Email</th>
+                    <th class="w-1/12">Phone</th>
+                    <th class="w-1/12">Total</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                  <tr>
+                    <td
+                      class="!text-left max-w-[150px] overflow-hidden whitespace-nowrap text-ellipsis"
+                      [pTooltip]="item.descriptionName"
+                      tooltipPosition="bottom"
+                    >
+                      {{ item.descriptionName }}
+                    </td>
+                    <td>{{ item.emailCount }}</td>
+                    <td>{{ item.phoneCount }}</td>
+                    <td>{{ item.totalTransactions }}</td>
+                  </tr>
+                </ng-template>
+                <!-- Single Row for Totals -->
+                <ng-template pTemplate="footer">
+                  <tr class="font-bold">
+                    <td class="w-1/2 !text-left">Total</td>
+                    <td>
+                      {{
+                        descriptionData.length
+                          ? descriptionData[0].totalEmailCount
+                          : 0
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        descriptionData.length
+                          ? descriptionData[0].totalPhoneCount
+                          : 0
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        descriptionData.length
+                          ? (descriptionData[0].totalEmailCount || 0) +
+                            (descriptionData[0].totalPhoneCount || 0)
+                          : 0
+                      }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-scrollpanel>
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <p-button
+            label="Export"
+            [raised]="true"
+            severity="secondary"
+            icon="pi pi-file-excel"
+            (onClick)="this.exportData(['description'])"
+          />
+        </div>
+      </p-panel>
+    </div>
+  </div>
+</p-card>

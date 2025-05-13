@@ -1,0 +1,142 @@
+<p-toast />
+<p-card class="overflow-hidden">
+  <div class="text-2xl font-semibold">Product Settings</div>
+  <div class="p-card-content mt-8 flex flex-col lg:flex-row gap-x-8">
+    <!-- Product Panel -->
+    <p-fieldset legend="Products" class="text-xl flex-1">
+      <div class="flex justify-end items-center mb-4 gap-x-4">
+        <p-message severity="info">{{ productCount }}</p-message>
+        <p-button
+          label="Add"
+          icon="pi pi-plus"
+          class="mr-2"
+          (click)="showProductDialog()"
+        />
+      </div>
+      <p-table
+        [value]="prodPageResult.items"
+        [paginator]="true"
+        [rows]="prodPageResult.pageSize"
+        [lazy]="true"
+        (onLazyLoad)="loadProducts($event)"
+        [totalRecords]="prodPageResult.totalCount"
+        [loading]="prodLoading"
+        [tableStyle]="{ 'min-width': '20rem' }"
+        [rowHover]="true"
+        class="text-base"
+        #productTable
+      >
+        <ng-template #body let-product>
+          <tr
+            (click)="onProductSelect(product)"
+            [ngClass]="{ 'selected-row': selectedProduct === product }"
+          >
+            <td
+              class="w-full max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis"
+            >
+              {{ product.name }}
+            </td>
+            <td class="text-center whitespace-nowrap">
+              <p-button
+                icon="pi pi-history"
+                severity="secondary"
+                [raised]="true"
+                (onClick)="showProductLogs(product)"
+              />
+            </td>
+            <td class="text-center whitespace-nowrap">
+              <p-button
+                icon="pi pi-user-edit"
+                severity="secondary"
+                [raised]="true"
+                (click)="showProductDialog(product)"
+              />
+            </td>
+            <!-- $event.stopPropagation();  -->
+            <td class="text-center whitespace-nowrap">
+              <p-confirmpopup />
+              <p-button
+                icon="pi pi-trash"
+                severity="secondary"
+                [raised]="true"
+                (click)="confirmAndDeleteProduct($event, product)"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-fieldset>
+
+    <!-- Description Panel -->
+    <p-fieldset legend="Descriptions" class="text-xl flex-[2]">
+      <div class="flex justify-end items-center mb-4 gap-x-4">
+        <p-message severity="info" *ngIf="this.selectedProduct">{{
+          descriptionCount
+        }}</p-message>
+        <p-button
+          label="Add"
+          icon="pi pi-plus"
+          class="mr-2"
+          (click)="showDescriptionDialog(selectedProduct!)"
+          [disabled]="!this.selectedProduct"
+        />
+      </div>
+      <ng-container *ngIf="selectedProduct; else noProductSelected">
+        <p-table
+          [value]="descPageResult.items"
+          [paginator]="true"
+          [rows]="10"
+          [totalRecords]="descPageResult.totalCount"
+          [lazy]="true"
+          (onLazyLoad)="!isInitialLoad && loadDescriptions($event)"
+          [loading]="descLoading"
+          [rowHover]="true"
+          class="text-base"
+          #descriptionTable
+        >
+          <ng-template #body let-description>
+            <tr (click)="onDescriptionSelect(description)">
+              <td
+                class="w-full max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis"
+                [pTooltip]="description.name"
+                tooltipPosition="bottom"
+              >
+                {{ description.name }}
+              </td>
+              <td class="text-center whitespace-nowrap">
+                <p-button
+                  icon="pi pi-history"
+                  severity="secondary"
+                  [raised]="true"
+                  (onClick)="showDescriptionLogs(description)"
+                />
+              </td>
+              <td class="text-center whitespace-nowrap">
+                <p-button
+                  icon="pi pi-user-edit"
+                  severity="secondary"
+                  [raised]="true"
+                  (click)="showDescriptionDialog(selectedProduct!, description)"
+                />
+              </td>
+              <td class="text-center whitespace-nowrap">
+                <p-button
+                  icon="pi pi-trash"
+                  severity="secondary"
+                  [raised]="true"
+                  (click)="confirmAndDeleteDescription($event, description)"
+                />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-container>
+      <ng-template #noProductSelected>
+        <p class="text-center text-gray-500 my-5">
+          Please select a product to view description list.
+        </p>
+      </ng-template>
+    </p-fieldset>
+  </div>
+  <div class="p-card-footer"></div>
+</p-card>

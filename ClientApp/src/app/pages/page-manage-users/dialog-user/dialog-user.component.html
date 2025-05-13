@@ -1,0 +1,192 @@
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col gap-4">
+    <!-- USERNAME -->
+    <label for="username">Username</label>
+    <div class="username-field">
+      <input pInputText formControlName="username" [fluid]="true" />
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          myForm.get('username')?.hasError('required') &&
+          myForm.get('username')?.touched
+        "
+      >
+        Username is required.
+      </p-message>
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          (myForm.get('username')?.hasError('maxlength') ||
+            myForm.get('username')?.hasError('minlength')) &&
+          myForm.get('username')?.dirty
+        "
+      >
+        Username must be between 4 and 20 characters.
+      </p-message>
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          myForm.get('username')?.hasError('usernameTaken') &&
+          myForm.get('username')?.dirty
+        "
+      >
+        Username is already taken.
+      </p-message>
+    </div>
+
+    <!-- FULLNAME -->
+    <label for="fullName">Full Name</label>
+    <div class="fullname-field">
+      <input pInputText formControlName="fullName" [fluid]="true" />
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          myForm.get('fullName')?.hasError('required') &&
+          myForm.get('fullName')?.touched
+        "
+      >
+        Fullname is required.
+      </p-message>
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          myForm.get('fullName')?.hasError('maxlength') &&
+          myForm.get('fullName')?.dirty
+        "
+      >
+        Fullname cannot exceed 50 characters.
+      </p-message>
+    </div>
+
+    <label for="password">Password</label>
+    <div class="password-field">
+      <p-password
+        formControlName="password"
+        [toggleMask]="true"
+        [fluid]="true"
+      />
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          myForm.get('password')?.hasError('required') &&
+          myForm.get('password')?.touched
+        "
+      >
+        Password is required.
+      </p-message>
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          (myForm.get('password')?.hasError('maxlength') ||
+            myForm.get('password')?.hasError('minlength')) &&
+          myForm.get('password')?.dirty
+        "
+      >
+        Password must be between 6 and 20 characters.
+      </p-message>
+    </div>
+
+    <label for="role">Role</label>
+    <div class="role-field">
+      <p-select
+        formControlName="role"
+        optionValue="role"
+        [options]="ROLE"
+        optionLabel="role"
+        placeholder="Select user role"
+        [editable]="false"
+        [fluid]="true"
+        appendTo="body"
+      />
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          myForm.get('role')?.hasError('required') &&
+          myForm.get('role')?.touched
+        "
+      >
+        Role is required.
+      </p-message>
+    </div>
+    <label for="role">Team</label>
+    <div class="team-field">
+      <p-select
+        formControlName="team"
+        optionValue="team"
+        [options]="FILTERED_TEAM"
+        optionLabel="team"
+        placeholder="Select user team"
+        [editable]="false"
+        [fluid]="true"
+        appendTo="body"
+      />
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          myForm.get('role')?.hasError('required') &&
+          myForm.get('role')?.touched
+        "
+      >
+        Role is required.
+      </p-message>
+    </div>
+
+    <label for="status">Status</label>
+    <div class="status-field">
+      <p-select
+        formControlName="status"
+        optionValue="status"
+        [options]="STATUS"
+        optionLabel="status"
+        placeholder="Select user status"
+        [editable]="false"
+        appendTo="body"
+        [fluid]="true"
+      />
+      <p-message
+        severity="error"
+        variant="simple"
+        size="small"
+        *ngIf="
+          myForm.get('status')?.hasError('required') &&
+          myForm.get('status')?.touched
+        "
+      >
+        Status is required.
+      </p-message>
+    </div>
+    <div class="flex justify-end gap-2">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        (click)="this.ref.close()"
+        icon="pi pi-times"
+      />
+      <p-button
+        [label]="Account ? 'Save' : 'Submit'"
+        type="submit"
+        [disabled]="myForm.invalid || isSubmitting || isFormUnchanged()"
+        icon="pi pi-check"
+        [loading]="isSubmitting"
+      />
+    </div>
+  </div>
+</form>

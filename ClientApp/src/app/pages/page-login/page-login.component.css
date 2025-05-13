@@ -1,0 +1,6 @@
+:host ::ng-deep .p-card {
+  @apply min-h-[60vh];
+  @apply flex;
+  @apply justify-center;
+  @apply items-center;
+}

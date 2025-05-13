@@ -1,0 +1,23 @@
+:host {
+  /* put here the components design token and customize */
+  th,
+  td {
+    @apply text-center;
+  }
+
+  ::ng-deep .p-card-header {
+    /* put here the component CSS classes and customize */
+    @apply flex;
+    @apply justify-end;
+    @apply gap-x-2;
+    @apply items-center;
+  }
+
+  ::ng-deep .p-datepicker-input {
+    @apply w-80;
+  }
+
+  /* ::ng-deep .p-panel {
+    @apply mb-8;
+  } */
+}

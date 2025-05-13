@@ -1,0 +1,37 @@
+<p-table
+  [value]="data.items"
+  [paginator]="true"
+  [rows]="data.pageSize"
+  [lazy]="true"
+  (onLazyLoad)="getLogs($event)"
+  [totalRecords]="data.totalCount"
+  [loading]="isLoading"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  [rowHover]="true"
+  class="text-base"
+>
+  <ng-template #header>
+    <tr>
+      <th class="w-1/6 text-lg">Id</th>
+      <th class="w-1/6 text-lg">Action</th>
+      <th class="w-1/6 text-lg">Details</th>
+      <th class="w-1/6 text-lg">Added By</th>
+      <th class="w-1/6 text-lg">Date added</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-item>
+    <tr>
+      <td>{{ item.id }}</td>
+      <td>{{ item.action }}</td>
+      <td
+        class="max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis"
+        [pTooltip]="item.detail"
+        tooltipPosition="bottom"
+      >
+        {{ item.detail }}
+      </td>
+      <td>{{ item.addedBy }}</td>
+      <td>{{ item.dateAdded | date : "d MMM y" }}</td>
+    </tr>
+  </ng-template>
+</p-table>

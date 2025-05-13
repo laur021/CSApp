@@ -1,0 +1,18 @@
+:host {
+  /* put here the components design token and customize */
+  th,
+  td {
+    @apply text-center;
+  }
+  ::ng-deep .p-datatable-table {
+    @apply mt-8;
+  }
+
+  ::ng-deep .p-card-header {
+    /* put here the component CSS classes and customize */
+    @apply flex;
+    @apply justify-end;
+    @apply gap-x-2;
+    @apply items-center;
+  }
+}

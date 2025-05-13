@@ -1,0 +1,185 @@
+<div class="flex h-screen overflow-hidden">
+  <!-- Sidebar -->
+  <div
+    class="bg-surface-900 dark:text-surface-100 transition-all duration-300 flex flex-col p-4 min-h-screen"
+    [ngClass]="{ 'w-64': isExpanded, 'w-20': !isExpanded }"
+  >
+    <div class="flex flex-col flex-1 justify-between">
+      <div>
+        <!-- Main Menu Items -->
+        <div class="flex justify-center mb-8">
+          <span class="inline-flex items-center gap-2">
+            <img
+              width="50"
+              src="/CS_girl_circle_bps.png"
+              alt="Profile"
+              class="rounded-full max-w-12"
+              [pTooltip]="
+                !isExpanded
+                  ? accountService.activeUser()?.team === 'CN'
+                    ? 'CNCS'
+                    : 'VNCS'
+                  : ''
+              "
+            />
+            <span class="font-semibold text-2xl text-nowrap" *ngIf="isExpanded"
+              >{{
+                accountService.activeUser()?.team === "CN" ? "CNCS" : "VNCS"
+              }}
+              <span class="text-sm">{{ VERSION.v1 }}</span></span
+            >
+          </span>
+        </div>
+
+        <span class="font-bold self-center whitespace-nowrap" *ngIf="isExpanded"
+          >RECORDS
+        </span>
+        <ul
+          class="list-none p-0 overflow-hidden"
+          [ngClass]="{ 'mb-8': isExpanded }"
+        >
+          <li *ngFor="let item of filterItemsByRole(recordsItems)">
+            <a
+              (click)="onItemClick(item.route, item.logDetails)"
+              pRipple
+              class="flex gap-x-4 items-center cursor-pointer p-4 rounded-border text-surface-0 hover:bg-surface-700 duration-150 transition-colors p-ripple"
+              [pTooltip]="!isExpanded ? item.label : ''"
+              tooltipPosition="right"
+            >
+              <i [ngClass]="item.icon"></i>
+              <span
+                [ngClass]="{
+                  'opacity-100': isExpanded,
+                  'opacity-0': !isExpanded
+                }"
+                class="font-medium whitespace-nowrap"
+                >{{ item.label }}</span
+              >
+            </a>
+          </li>
+        </ul>
+
+        <span class="font-bold self-center whitespace-nowrap" *ngIf="isExpanded"
+          >REPORTS
+        </span>
+        <ul
+          class="list-none p-0 overflow-hidden"
+          [ngClass]="{ 'mb-8': isExpanded }"
+        >
+          <li *ngFor="let item of filterItemsByRole(reportsItems)">
+            <a
+              (click)="onItemClick(item.route, item.logDetails)"
+              pRipple
+              class="flex gap-x-4 items-center cursor-pointer p-4 rounded-border text-surface-0 hover:bg-surface-700 duration-150 transition-colors p-ripple"
+              [pTooltip]="!isExpanded ? item.label : ''"
+              tooltipPosition="right"
+            >
+              <i [ngClass]="item.icon"></i>
+              <span
+                [ngClass]="{
+                  'opacity-100': isExpanded,
+                  'opacity-0': !isExpanded
+                }"
+                class="font-medium whitespace-nowrap"
+                >{{ item.label }}</span
+              >
+            </a>
+          </li>
+        </ul>
+
+        <span class="font-bold self-center whitespace-nowrap" *ngIf="isExpanded"
+          >TOOLS
+        </span>
+        <ul class="list-none p-0 mb-8 overflow-hidden">
+          <li *ngFor="let item of filterItemsByRole(toolsItems)">
+            <a
+              (click)="onItemClick(item.route, item.logDetails)"
+              pRipple
+              class="flex gap-x-4 items-center cursor-pointer p-4 rounded-border text-surface-0 hover:bg-surface-700 duration-150 transition-colors p-ripple"
+              [pTooltip]="!isExpanded ? item.label : ''"
+              tooltipPosition="right"
+            >
+              <i [ngClass]="item.icon"></i>
+              <span
+                [ngClass]="{
+                  'opacity-100': isExpanded,
+                  'opacity-0': !isExpanded
+                }"
+                class="font-medium whitespace-nowrap"
+                >{{ item.label }}</span
+              >
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="mb-4">
+          <span
+            class="font-bold self-center whitespace-nowrap"
+            [ngClass]="{
+              'opacity-100': isExpanded,
+              'opacity-0': !isExpanded
+            }"
+            >SETTINGS
+          </span>
+          <ul class="list-none p-0 m-0 overflow-hidden">
+            <li *ngFor="let item of filterItemsByRole(settingsItems)">
+              <a
+                (click)="onItemClick(item.route, item.logDetails)"
+                pRipple
+                class="flex gap-x-4 items-center cursor-pointer p-4 rounded-border text-surface-0 hover:bg-surface-700 duration-150 transition-colors p-ripple"
+                [pTooltip]="!isExpanded ? item.label : ''"
+                tooltipPosition="right"
+              >
+                <i [ngClass]="item.icon"></i>
+                <span
+                  [ngClass]="{
+                    'opacity-100': isExpanded,
+                    'opacity-0': !isExpanded
+                  }"
+                  class="font-medium whitespace-nowrap"
+                  >{{ item.label }}</span
+                >
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div class="mt-auto">
+            <hr
+              class="mb-4 mx-4 border-t border-gray-300 dark:border-gray-700"
+            />
+            <a
+              pRipple
+              class="flex gap-x-4 items-center cursor-pointer p-4 rounded-border text-surface-0 hover:bg-surface-700 duration-150 transition-colors p-ripple"
+              (click)="onLogout()"
+              [pTooltip]="!isExpanded ? 'Logout' : ''"
+              tooltipPosition="right"
+            >
+              <i class="pi pi-sign-out"></i>
+              <span class="font-bold">Logout</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex flex-col flex-1 h-screen p-4 gap-y-4">
+    <div>
+      <p-button
+        (click)="toggleSidebar()"
+        icon="pi pi-bars"
+        severity="secondary"
+      />
+    </div>
+
+    <div class="flex-1 overflow-auto">
+      <router-outlet></router-outlet>
+    </div>
+
+    <app-footer></app-footer>
+  </div>
+</div>
